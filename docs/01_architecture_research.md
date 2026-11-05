@@ -11,6 +11,8 @@
 
 **Method.** Purpose-first, as the doctrine demands: we first state what an NHI must *be and do* (§1), derive the hard requirements that follow (§1.1), survey the seven architecture axes any combination must decide on (§2), assemble candidate composites (§3), score them against the doctrine (§3.1), and only then commit to a reference architecture (§4). Claims about external systems are cited; claims about XorZen/FRAZIYM assets come from the audited v0.4 documentation in `vendor/XorZen/`.
 
+**Evidence provenance (corrected after owner challenge).** Originally this document contained no self-executed evidence; the substrate claims were cited from audit reports, and the §3.1 scoring is a design judgment, not a measurement. On 2026-11-05 the XorZen test suite (161/161 pass) and an independent 5-point conditional-compute verification (V1–V4 PASS; V5 exposed a stale README param table) were executed and logged in [`03_verification_log.md`](03_verification_log.md). Read §3.1 as *argued ranking against doctrine*, and the verification log as *what has actually been measured on this codebase*.
+
 **What this document is not.** It is not the component specification. It selects the *combination*; per-component specs (kernel format, ledger schemas, adapter training recipe) follow in Phase 2.
 
 ---
