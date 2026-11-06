@@ -64,9 +64,12 @@ The one-sentence form: **a frozen conditional-compute engine, made singular by a
 ```
 NHI-matrix/
 ├── README.md                        ← you are here (charter + doctrine)
-└── docs/
-    ├── 01_architecture_research.md  ← axis survey, candidate scoring, reference architecture
-    └── 02_canon_mapping.md          ← VisionQuest canon → real architecture mapping
+├── docs/
+│   ├── 01_architecture_research.md  ← axis survey, candidate scoring, reference architecture
+│   └── 02_canon_mapping.md          ← VisionQuest canon → real architecture mapping
+└── experiments/
+    └── 001_mini_talk/               ← EXECUTED: XorZen zero_1M trained 1500 steps, talks
+                                       (metrics.json, train.log, scripts, ckpt)
 ```
 
 Planned (not yet written — do not treat as existing):
