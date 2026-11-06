@@ -98,6 +98,7 @@ NHI-matrix is designed *on* XorZen and *with* its sibling projects:
 | **xorvec-data** | corpus pipeline for blueprint training material |
 | **libcompact / xorzen.cpp** | CPU-first deployment of L0 and L4 |
 | **.xorm + PERSONALITY_TOKENS** | encrypted instance packaging; persona tokens feed L1 |
+| **XorZen `/NHI/` handoff kit** | agent-facing bridge maintained inside the upstream XorZen repo (`NHI/` at `Akik-Forazi/XorZen`): engine-as-measured notes, doctrine summary, links back here — so a fresh agent can pick up the program from inside the engine repo |
 
 ---
 
@@ -106,6 +107,7 @@ NHI-matrix is designed *on* XorZen and *with* its sibling projects:
 - **Phase 0 — Architecture research: complete.** Reference architecture selected (Candidate D, 34/35).
 - **Verification: executed.** 2026-11-05: 161/161 upstream test suite + independent V1–V5 conditional-compute checks on the vendor copy (findings #1–#4). 2026-11-06: exp-001 — fresh upstream clone (`954f3ce`), zero_1M smoke + 1500-step CPU training + 9 raw talk generations (findings #5–#9). Everything measured is logged in `docs/03_verification_log.md`; everything not yet measured is tagged `[VENDOR]` in `docs/01`.
 - **exp-002 (proposed):** zero_10M routing-pressure run + upstream `generate()` context-trim fix.
+- **Agent handoff (2026-11-06):** upstream XorZen now carries the `NHI/` kit (commit pending push) — XORZEN_NOTES (engine as measured, findings #1–#9), AGENTS contract, NHI_MATRIX program summary — discoverable from `AGENT_HANDOFF.md` §9.
 - **Phase 1 — Founding canon:** in progress; verbatim doctrine text from owner dictation being incorporated.
 - **Phase 2 — Component specs:** not started. Kernel v0 (L3) remains the priority build item.
 
