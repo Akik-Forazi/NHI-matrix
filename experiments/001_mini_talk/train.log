@@ -1,0 +1,96 @@
+[    0.0s] corpus: book_11.txt -> 144,605 chars (cleaned)
+[    0.0s] corpus: book_16.txt -> 255,593 chars (cleaned)
+[    0.0s] corpus: book_35.txt -> 179,708 chars (cleaned)
+[    0.0s] corpus: book_5200.txt -> 118,425 chars (cleaned)
+[    0.0s] corpus total: 698,301 chars
+[    0.1s] tokenizer: word-level vocab=6004 (model allows 6765), stream=158,761 tokens, unk_rate=2.3%
+[    0.1s] split: train=150,823 val=7,938
+[94m[2026-11-06T08:54:32.745907] [INFO] [global_logger] Global logger initialized[0m
+[    1.6s] model: zero_1M params=1,053,711 trainable=953,838 vocab=6765 ctx=128
+[93m[2026-11-06T08:54:33.634767] [WARNING] [data.converter] pandas and/or pyarrow not found. Parquet conversion will not be supported.[0m
+[93m[2026-11-06T08:54:33.645674] [WARNING] [data.inspector] pandas and/or pyarrow not available. Parquet inspection will not be supported.[0m
+[94m[2026-11-06T08:54:33.682310] [INFO] [core] Initializing xorzen_nano_1m with 3 layers...[0m
+[94m[2026-11-06T08:54:33.686532] [INFO] [cot] Using 'gru' update mechanism for CoT.[0m
+[94m[2026-11-06T08:54:33.687298] [INFO] [core] Internal CoT: 6 components x 16 dim = 96 total (frozen for pre-training)[0m
+[94m[2026-11-06T08:54:33.688878] [INFO] [router] Initialized AdaptiveRouter: depth=3, widths=1, experts=2, top_k=1[0m
+[94m[2026-11-06T08:54:33.688928] [INFO] [core] Adaptive Router initialized (depth/width/path/expert routing)[0m
+[94m[2026-11-06T08:54:33.692714] [INFO] [hass] HASSBlock 0: using SlicedFFN (genuine width sparsity), widths=[64, 256][0m
+[94m[2026-11-06T08:54:33.692969] [INFO] [hass] HASSBlock 0: hidden=64, local_window=128, low_rank=96, ssm=16[0m
+[94m[2026-11-06T08:54:33.694856] [INFO] [hass] HASSBlock 1: using SlicedFFN (genuine width sparsity), widths=[64, 256][0m
+[94m[2026-11-06T08:54:33.694986] [INFO] [hass] HASSBlock 1: hidden=64, local_window=128, low_rank=96, ssm=16[0m
+[94m[2026-11-06T08:54:33.696809] [INFO] [hass] HASSBlock 2: using SlicedFFN (genuine width sparsity), widths=[64, 256][0m
+[94m[2026-11-06T08:54:33.696940] [INFO] [hass] HASSBlock 2: hidden=64, local_window=128, low_rank=96, ssm=16[0m
+[94m[2026-11-06T08:54:33.696992] [INFO] [core] Created 3 HASS blocks (Local/Global/SSM pathways)[0m
+[94m[2026-11-06T08:54:33.697175] [INFO] [core] zeroModel passing test_mode=False to ShardedExpertFabric[0m
+[94m[2026-11-06T08:54:33.697209] [INFO] [zmoe] ShardedExpertFabric initialized with test_mode=False[0m
+[94m[2026-11-06T08:54:33.698290] [INFO] [zmoe] Expert Disk Manager initialized[0m
+[94m[2026-11-06T08:54:33.698324] [INFO] [zmoe]   Directory: experts[0m
+[94m[2026-11-06T08:54:33.698330] [INFO] [zmoe]   Total Experts: 2[0m
+[94m[2026-11-06T08:54:33.698336] [INFO] [zmoe]   Existing Shards: 2[0m
+[94m[2026-11-06T08:54:33.698361] [INFO] [zmoe] LRU Expert Cache initialized (capacity: 24 experts)[0m
+[94m[2026-11-06T08:54:33.699196] [INFO] [zmoe] ShardedExpertFabric initialized[0m
+[94m[2026-11-06T08:54:33.699221] [INFO] [zmoe]   Total Experts: 2[0m
+[94m[2026-11-06T08:54:33.699227] [INFO] [zmoe]   Top-K: 1[0m
+[94m[2026-11-06T08:54:33.699232] [INFO] [zmoe]   Cache Size: 24[0m
+[94m[2026-11-06T08:54:33.699326] [INFO] [zmoe]   Disk Size: 0.38 MB[0m
+[94m[2026-11-06T08:54:33.699534] [INFO] [core] MoE: 2 experts (Top-1 routing, disk-sharded)[0m
+[94m[2026-11-06T08:54:33.699581] [INFO] [merger] Creating merger of type: gated[0m
+[94m[2026-11-06T08:54:33.700140] [INFO] [merger] XORZENXMergerGate initialized, using 'gated' implementation.[0m
+[94m[2026-11-06T08:54:33.700177] [INFO] [core] Merger gate initialized (fuses HASS + MoE + CoT)[0m
+[94m[2026-11-06T08:54:33.702293] [INFO] [core] Tied word embeddings (embedding ↔ lm_head)[0m
+[94m[2026-11-06T08:54:33.709659] [INFO] [core] Model initialized: 1,053,711 total params, 953,838 trainable[0m
+[94m[2026-11-06T08:54:33.709703] [INFO] [core] Top-1/2 experts active per token (~4.6% of 953,838 trainable params | active~44,329 / total~1,053,711)[0m
+[    3.8s] ======================================================================
+[    3.8s] TRAINING START: 1500 steps x B8 x T128
+[    4.0s] step     1/1500 | loss=8.6158 | 4,305 tok/s | rss=593MB | lr=6.00e-06
+[    5.6s]   eval_loss @ step 1: 8.8287
+[    6.1s]   SAMPLE @ 1 | prompt='Alice was ' -> 'Alice was took descendants Clambering strain adjustment ignorance clamber considerable scale KING suppressed bolted wane daylight crown Nothing inadequacy countless shower CHORUS impulse plausible door snatch transitory firm pack headlong Hundred much doubted printed locks craft assembled glass widening charwoman dish groping'
+[   16.7s] step    50/1500 | loss=8.2765 | 4,727 tok/s | rss=669MB | lr=1.53e-04
+[   27.7s] step   100/1500 | loss=7.4871 | 4,653 tok/s | rss=683MB | lr=3.00e-04
+[   38.2s] step   150/1500 | loss=6.6964 | 4,871 tok/s | rss=688MB | lr=2.99e-04
+[   48.8s] step   200/1500 | loss=6.1491 | 4,850 tok/s | rss=694MB | lr=2.96e-04
+[   59.4s] step   250/1500 | loss=5.9717 | 4,793 tok/s | rss=696MB | lr=2.92e-04
+[   69.9s] step   300/1500 | loss=5.8030 | 4,912 tok/s | rss=696MB | lr=2.85e-04
+[   80.2s] step   350/1500 | loss=5.7708 | 4,974 tok/s | rss=696MB | lr=2.77e-04
+[   90.5s] step   400/1500 | loss=5.9829 | 4,956 tok/s | rss=697MB | lr=2.67e-04
+[  100.7s] step   450/1500 | loss=5.7169 | 5,034 tok/s | rss=700MB | lr=2.56e-04
+[  110.9s] step   500/1500 | loss=5.9040 | 4,999 tok/s | rss=700MB | lr=2.44e-04
+[  121.6s] step   550/1500 | loss=5.8104 | 4,800 tok/s | rss=700MB | lr=2.30e-04
+[  132.3s] step   600/1500 | loss=5.9058 | 4,777 tok/s | rss=702MB | lr=2.15e-04
+[  134.0s]   eval_loss @ step 600: 6.2734
+[  134.5s]   SAMPLE @ 600 | prompt='Alice was ' -> 'Alice was took ve at strain me, a we I” let. the to was, you she out,, door s, said pack The,, will. my of then for to said in are'
+[  134.6s]   checkpoint saved: ckpt_step600.pt
+[  145.2s] step   650/1500 | loss=5.6830 | 4,828 tok/s | rss=709MB | lr=2.00e-04
+[  155.6s] step   700/1500 | loss=5.7032 | 4,882 tok/s | rss=709MB | lr=1.83e-04
+[  166.0s] step   750/1500 | loss=5.5970 | 4,954 tok/s | rss=709MB | lr=1.67e-04
+[  176.5s] step   800/1500 | loss=5.6725 | 4,874 tok/s | rss=709MB | lr=1.50e-04
+[  187.2s] step   850/1500 | loss=5.5416 | 4,790 tok/s | rss=709MB | lr=1.33e-04
+[  197.5s] step   900/1500 | loss=5.5651 | 4,964 tok/s | rss=709MB | lr=1.17e-04
+[  207.8s] step   950/1500 | loss=5.6615 | 4,985 tok/s | rss=711MB | lr=1.00e-04
+[  217.9s] step  1000/1500 | loss=5.5203 | 5,071 tok/s | rss=711MB | lr=8.49e-05
+[  228.4s] step  1050/1500 | loss=5.4653 | 4,844 tok/s | rss=711MB | lr=7.02e-05
+[  238.9s] step  1100/1500 | loss=5.4581 | 4,912 tok/s | rss=714MB | lr=5.65e-05
+[  249.0s] step  1150/1500 | loss=5.6318 | 5,050 tok/s | rss=714MB | lr=4.39e-05
+[  258.8s] step  1200/1500 | loss=5.7219 | 5,201 tok/s | rss=719MB | lr=3.27e-05
+[  260.4s]   eval_loss @ step 1200: 6.2250
+[  260.8s]   SAMPLE @ 1200 | prompt='Alice was ' -> 'Alice was have ve at, me that a we mother” let be the to to, you she out,, door” Starkey and pack The’ much his. last of of for to that in.'
+[  260.9s]   checkpoint saved: ckpt_step1200.pt
+[  271.0s] step  1250/1500 | loss=5.5154 | 5,027 tok/s | rss=720MB | lr=2.30e-05
+[  281.1s] step  1300/1500 | loss=5.5705 | 5,068 tok/s | rss=720MB | lr=1.50e-05
+[  291.6s] step  1350/1500 | loss=5.4612 | 4,896 tok/s | rss=720MB | lr=1.50e-05
+[  301.7s] step  1400/1500 | loss=5.5737 | 5,094 tok/s | rss=720MB | lr=1.50e-05
+[  311.7s] step  1450/1500 | loss=5.4368 | 5,079 tok/s | rss=720MB | lr=1.50e-05
+[  321.7s] step  1500/1500 | loss=5.4822 | 5,155 tok/s | rss=720MB | lr=1.50e-05
+[  323.2s] eval_loss final @ step 1500: 6.1928
+[  323.2s] ======================================================================
+[  323.2s] FINAL TALK — raw generations (unfiltered, decoded from BPE ids < 4096)
+[  324.1s] TALK [0.5] 'Alice was ' -> 'Alice was as, the.“’ already,, said.“, could a’ a. It to, he? and, the.“ was in, he a,, the.“ I“,,,, there, it and, to that, and the,, the,, so“ I have chief to, the of., was to and to, the.’'
+[  325.0s] TALK [0.8] 'Alice was ' -> 'Alice was as on to. to’ already their teeth and To business that’ a pieces It the is? and came by. he know in in. is me the of suggestion she.“, was but there this over and Here to that could and, the, the., so out the. chief to he but was their, was’ walked” said, the.’'
+[  325.9s] TALK [1.1] 'Alice was ' -> 'Alice was as few to passionate to’ already their teeth box To Once business that’ a pieces third patiently is? and came by moved over nodded Age in- is me shone chocolate suggestion notion.“ party through cried but there this over and Here to that could After fair the, her so, so everywhere Mock sewing chief Liza he but saw their, was One and want to that the And’'
+[  326.8s] TALK [0.5] 'The Time Traveller ' -> 'The Time Traveller, as was, the, she to,, said said the, the,, was the as,’ that was to,, a, they a of.“,,, was, a. the, was,’ right to the,’ a. as he to to” was to and the. Alice“, said said“ was,, he, a had a, was'
+[  327.7s] TALK [0.8] 'The Time Traveller ' -> 'The Time Traveller Alice as that bare the! sent of myself“ well said the, the, social was to as,’ that to to, had a the they a of.“ Michael,, was be a man which stood” could’ right in the;’ a thing as he been.” like. Peter the. Alice“, said said“ was,, a was a had even the were'
+[  328.6s] TALK [1.1] 'The Time Traveller ' -> 'The Time Traveller Alice as probably bare path whole sent planet myself frightening away the for stairway the, social happy charwoman unmolested as,’ must to after inhuman had a used they a ten she s side John“ summer time a man which stood; could denying right in how pleasant wait broken thing as he been s as like weary and the. Alice— limping didn empty“ was rose beneath deep was heart there even first were'
+[  329.5s] TALK [0.5] 'Once upon a ' -> 'Once upon a. as,, the, she the, I, said the, the, was. was to as,’ that to to,, a, they a of.“,,, was, a. the, was,’ right to the,’ a. as he to to” was to and the. Alice“, said said“ was,, he, a had a, was'
+[  330.4s] TALK [0.8] 'Once upon a ' -> 'Once upon a. as that bare the! sent of myself I well the for, the, social was to as,’ that to to, had a the they a of.“ Michael,, was be a man which stood” could’ right in the;’ a thing as he been. had like. Peter the. Alice“, said said“ was,, a was a had even the were'
+[  331.3s] TALK [1.1] 'Once upon a ' -> 'Once upon a. as probably bare path whole sent planet myself frightening away the for stairway the, social happy charwoman unmolested as,’ must to after inhuman had a used they a ten she s side John“ summer time a man which stood; could denying right in how pleasant wait broken thing as he been s as like weary and the. Alice— limping didn empty“ was rose beneath deep was heart there even first were'
+[  331.3s] DONE in 5.5 min | metrics.json + ckpt_final.pt saved | final tok/s=5117
