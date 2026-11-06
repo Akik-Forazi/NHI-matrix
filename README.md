@@ -4,7 +4,7 @@
 
 NHI-matrix is the specification and research program for a matrix-structured non-human intelligence: a frozen, hardware-constrained neural engine wrapped in a persona layer, a symbolic verifiable kernel, a memory operating system, and a blackboard-style social workspace — engineered so that *what the system is for* decides *how it is built*, and so that certain rows of the matrix simply cannot be rewritten by anything inside the system.
 
-This repository is the founding canon and research record. It currently contains the **architectural combinations research** that selects the reference architecture from the full space of candidates.
+This repository is the founding canon and research record. It currently contains the **architectural combinations research** that selects the reference architecture, the **executed verification log** (test suite, conditional-compute checks, findings), and **experiments/001_mini_talk** — the first executed experiment: an XorZen `zero_1M` mini model trained 1500 steps on CPU and made to talk.
 
 ---
 
@@ -66,10 +66,13 @@ NHI-matrix/
 ├── README.md                        ← you are here (charter + doctrine)
 ├── docs/
 │   ├── 01_architecture_research.md  ← axis survey, candidate scoring, reference architecture
-│   └── 02_canon_mapping.md          ← VisionQuest canon → real architecture mapping
-└── experiments/
-    └── 001_mini_talk/               ← EXECUTED: XorZen zero_1M trained 1500 steps, talks
-                                       (metrics.json, train.log, scripts, ckpt)
+│   ├── 02_canon_mapping.md          ← VisionQuest canon → real architecture mapping
+│   └── 03_verification_log.md       ← EXECUTED evidence: 161/161 suite, V1–V5 checks, exp-001, findings #1–#9
+├── experiments/
+│   └── 001_mini_talk/               ← EXECUTED: XorZen zero_1M trained 1500 steps, talks
+│                                       (metrics.json, train.log, scripts, vocab, ckpt)
+└── scripts/
+    └── tess_verify_conditional_compute.py  ← independent V1–V5 harness
 ```
 
 Planned (not yet written — do not treat as existing):
@@ -100,9 +103,11 @@ NHI-matrix is designed *on* XorZen and *with* its sibling projects:
 
 ## Status
 
-- **Phase 0 — Architecture research: complete** (this push). Reference architecture selected.
+- **Phase 0 — Architecture research: complete.** Reference architecture selected (Candidate D, 34/35).
+- **Verification: executed.** 2026-11-05: 161/161 upstream test suite + independent V1–V5 conditional-compute checks on the vendor copy (findings #1–#4). 2026-11-06: exp-001 — fresh upstream clone (`954f3ce`), zero_1M smoke + 1500-step CPU training + 9 raw talk generations (findings #5–#9). Everything measured is logged in `docs/03_verification_log.md`; everything not yet measured is tagged `[VENDOR]` in `docs/01`.
+- **exp-002 (proposed):** zero_10M routing-pressure run + upstream `generate()` context-trim fix.
 - **Phase 1 — Founding canon:** in progress; verbatim doctrine text from owner dictation being incorporated.
-- **Phase 2 — Component specs:** not started.
+- **Phase 2 — Component specs:** not started. Kernel v0 (L3) remains the priority build item.
 
 ## License
 

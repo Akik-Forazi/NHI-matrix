@@ -92,6 +92,10 @@ after 1.5M tokens on 2 CPU cores — nobody should claim more from this run.
    background training died silently twice (log ends mid-run, no traceback). Fix:
    run training in a single foreground call (<600s) with incremental `metrics.json`
    dumps every 50 steps so partial data survives a kill.
+5. **Artifact flaw (disclosed):** `train.log`'s FINAL TALK banner reads "decoded from
+   BPE ids < 4096" — a stale log string left over from the first (abandoned) BPE
+   attempt. The actual tokenizer is word-level (6004 entries); all decode logic and
+   `metrics.json` are correct. The committed script copy has the banner fixed.
 
 ## Files
 
@@ -101,6 +105,42 @@ after 1.5M tokens on 2 CPU cores — nobody should claim more from this run.
 - `train.log` — verbatim stdout of the full run
 - `vocab.json` — word-level vocabulary (6004 entries)
 - `ckpt_final.pt` — final weights (4.2MB); `ckpt_step600/1200.pt` kept locally only
+
+## Tess's verdict (post-run review, 2026-11-06)
+
+**What's genuinely good.** It's real. Everything the doctrine docs describe actually boots
+and runs: AdaptiveRouter, HASS blocks (local / low_rank=96 / ssm=16), SlicedFFN width
+sparsity, disk-sharded MoE (2 experts, 0.38MB on disk), gated merger — all alive on a
+2-core CPU with 4GB RAM at ~5,100 tok/s sustained. The ~4.6% active-params/token figure
+shows up in the framework's own init logs. 1500 steps in 5.5 minutes, RSS never over
+720MB. For a framework whose selling point is conditional compute on constrained hardware,
+the mini tier *demonstrates the thesis cheaply* — exactly what a nano-testbed is for.
+
+**What's not good (all found by execution, not reading).**
+
+1. **Craftsmanship leaks.** Param count off by −23,792 vs the docstring; `train_colab.py`
+   ships pointing at a tokenizer that isn't in the package; `generate()` crashes when
+   prompt+1 token crosses context_length. None are hard bugs — but they show the
+   *generation* path and the *docs* don't get the same test love as the training path.
+   If XorZen is meant to hold kernel-level authority someday (three immutable rows),
+   "the docstring lies by 2.2%" is a doctrine violation in miniature.
+2. **At this scale the routing is theater.** hidden=64, 3 layers, 1 width choice,
+   2 experts top-1 — the router has almost nothing meaningful to decide, so its
+   decisions are noise, not computation. The interesting vendor claims (depth skipping
+   31.8%, width 0.500×, active-param scaling) can only be *tested* at ≥10M scale where
+   routing has consequences. Mini zero proves the machinery runs; it cannot prove the
+   machinery matters.
+3. **The talk itself.** Correct function-word texture, punctuation glues right, prompts
+   get on-topic continuations — but unigram-dominated babble: different prompts at the
+   same temperature nearly converge. A toddler that learned the *sound* of the four
+   books, not the story. Expected for 1M params × 1.5M tokens; stated plainly rather
+   than hyped.
+
+**Verdict:** good dog, small bark. As an end-to-end doctrine probe and CI harness for
+NHI-matrix — genuinely valuable, keep it. As evidence for the big architectural claims —
+the appetizer, not the meal. It gets interesting at `zero_10M` with real routing pressure:
+**proposed exp-002 = zero_10M training + routing-pressure measurements + upstream
+`generate()` context-trim fix.**
 
 ## Reproduce
 

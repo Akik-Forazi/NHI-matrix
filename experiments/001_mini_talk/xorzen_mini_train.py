@@ -12,7 +12,6 @@ os.makedirs(RUN_DIR, exist_ok=True)
 STEPS = int(sys.argv[1]) if len(sys.argv) > 1 else 1800
 BATCH, SEQ = 8, 128
 LR, WARMUP = 3e-4, 100
-VOCAB = 4096  # our BPE vocab; model vocab_size=6765, we keep ids < 4096
 
 def rss_mb():
     return resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024.0
@@ -167,7 +166,7 @@ el_final = eval_loss()
 metrics["eval_curve"].append({"step": STEPS, "eval_loss": round(el_final, 4)})
 log(f"eval_loss final @ step {STEPS}: {el_final:.4f}")
 log("=" * 70)
-log("FINAL TALK — raw generations (unfiltered, decoded from BPE ids < 4096)")
+log(f"FINAL TALK — raw generations (unfiltered, decoded from word-level vocab, ids < {len(vocab)})")
 for p in PROMPTS:
     for temp in (0.5, 0.8, 1.1):
         s = sample(p, max_new=80, temperature=temp, seed=7)

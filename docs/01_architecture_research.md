@@ -1,6 +1,6 @@
 # Architectural Combinations Research for NHI-matrix
 
-**Version:** 0.1 · **Date:** 2026-11-05 · **Status:** Selected — Candidate D
+**Version:** 0.2 · **Date:** 2026-11-05, revised 2026-11-06 after exp-001 · **Status:** Selected — Candidate D
 **Doctrine binding:** purpose-first · legacy three lines · three immutable rows · uniqueness · GOFAI synthesis · DL boundaries · hardware constraints
 
 ---
@@ -9,7 +9,7 @@
 
 **Question.** Of all the architectural combinations available in 2026, which one should NHI-matrix be built from?
 
-**Method.** Purpose-first, as the doctrine demands: we first state what an NHI must *be and do* (§1), derive the hard requirements that follow (§1.1), survey the seven architecture axes any combination must decide on (§2), assemble candidate composites (§3), score them against the doctrine (§3.1), and only then commit to a reference architecture (§4). Claims about external systems are cited; claims about XorZen/FRAZIYM assets come from the audited v0.4 documentation in `vendor/XorZen/`.
+**Method.** Purpose-first, as the doctrine demands: we first state what an NHI must *be and do* (§1), derive the hard requirements that follow (§1.1), survey the seven architecture axes any combination must decide on (§2), assemble candidate composites (§3), score them against the doctrine (§3.1), and only then commit to a reference architecture (§4). Claims about external systems are cited; claims about XorZen/FRAZIYM assets carry a provenance tag — **[EXECUTED]** (run by us, monitored output in [`03_verification_log.md`](03_verification_log.md)) or **[VENDOR]** (transcribed from audit docs in `vendor/XorZen/`, not reproduced).
 
 **Evidence provenance (corrected after owner challenge).** Originally this document contained no self-executed evidence; the substrate claims were cited from audit reports, and the §3.1 scoring is a design judgment, not a measurement. On 2026-11-05 the XorZen test suite (161/161 pass) and an independent 5-point conditional-compute verification (V1–V4 PASS; V5 exposed a stale README param table) were executed and logged in [`03_verification_log.md`](03_verification_log.md). Read §3.1 as *argued ranking against doctrine*, and the verification log as *what has actually been measured on this codebase*.
 
@@ -51,9 +51,12 @@ Every candidate combination is a choice on seven axes. For each axis: the state 
 ### Axis A — Neural substrate: dense vs. conditional compute
 
 **Evidence.**
-- XorZen v0.4 (audited): hybrid **Transformer × MoE × SSM** with genuine per-token conditional compute across four axes — depth (gather-scatter block skipping), width (SlicedFFN), pathway (Local-Attention / Low-Rank-Global / SSM dispatch), and expert (top-k MoE). Verified model-level: forcing width=16 vs 32 changes FFN FLOPs by exactly 0.500×; depth skipping saves 31.8%; pathway and top-k dispatch verified. v0.4 vs v0.3: 2× lower loss at **−22.8% FLOPs**. Active-parameter share falls with scale (53.5% at 277M ⇒ 43.8% at 391M actual), the XorZen scaling law.
+- XorZen (fresh clone `954f3ce`, v1.0.1): hybrid **Transformer × MoE × SSM** with per-token conditional compute across four axes — depth (gather-scatter block skipping), width (SlicedFFN), pathway (Local-Attention / Low-Rank-Global / SSM dispatch), and expert (top-k MoE). **[EXECUTED]** mechanisms, independently re-verified on this codebase (verification log V1–V4): forcing width=16 vs 32 changes FFN FLOPs by exactly **0.5000×**; forced top-k executes exactly the forced experts (top-1 and top-2); pathway top-1 starvation zeroes the other pathways' FLOPs and calls; half-depth inference skips later blocks entirely (64/64/0 tokens at blocks 0/1/2). **[VENDOR — magnitudes not reproduced]**: depth skipping saves 31.8%; v0.4 vs v0.3 gives 2× lower loss at −22.8% FLOPs; active-parameter share falls 53.5% (277M) ⇒ 43.8% (391M). Re-measure at ≥10M scale before citing.
+- **[EXECUTED]** exp-001 end-to-end (2026-11-06): `zero_1M` (1,053,711 actual params) trained 1500 steps on 4 Gutenberg books on 2-core CPU at ~5,100 tok/s — loss 8.61→5.48, eval 6.19 — and generates text (unigram-dominated babble, honestly documented in `experiments/001_mini_talk/`). This is proof the substrate *runs and learns* end-to-end on owner-scale hardware; it is **not** proof of the conditional-compute magnitudes (see the mini-scale caveat below).
 - Industry convergence point (self-referential but instructive): GLM-5.3-Flash — 320B total / **18B active** (5.6%), hybrid sparse + linear attention cutting attention compute 3.01× and KV cache 4.44× vs its dense-attention sibling, with an explicit `reasoning_effort` budget knob. The frontier's efficiency tier is built exactly as XorZen's doctrine: sparse activation, hybrid sequence mixing, budget knobs.
-- Known XorZen limitations to design around: eval-mode pathway collapse; depth sparsity is inference-only; SPPQ currently placeholder (0% memory saving); Python dispatch overhead at tiny scale on CPU.
+- Known XorZen limitations to design around [VENDOR]: eval-mode pathway collapse; depth sparsity is inference-only; SPPQ currently placeholder (0% memory saving); Python dispatch overhead at tiny scale on CPU.
+
+**Mini-scale caveat [EXECUTED, exp-001].** At `NANO_1M` (hidden=64, 3 layers, 1 width choice, 2 experts top-1) the router has almost nothing meaningful to decide — routing decisions are near-noise, and per-token active-param share (~4.6%, router-reported) is dominated by the tiny expert slice. The conditional-compute *claims* only become testable propositions at ≥10M scale, where routing choices carry real compute consequences. exp-002 (zero_10M) is the planned scale test.
 
 **Implication.** The substrate is **XorZen, frozen** — we do not pretrain, we inhabit. Conditional compute is not just efficiency: the router's compute_budget is the natural hardware hook for the doctrine (§5), and per-token routing telemetry gives the upper layers an *introspection signal* no dense model offers. The frozen-weights stance also matches the canon (the Markridge engine is bought, not grown — § canon mapping).
 
@@ -186,7 +189,7 @@ Score 0–5 per doctrine principle (5 = fully satisfies):
 
 | Layer | Already built | To build (Phase 2) |
 |---|---|---|
-| L0 | XorZen v0.4 engine (audited), xorzen.cpp port, SPPQ skeleton | real SPPQ; eval-mode collapse fix; CPU dispatch optimization |
+| L0 | XorZen v1.0.1 engine (fresh clone `954f3ce`; mechanisms re-executed V1–V4; exp-001 end-to-end run), xorzen.cpp port, SPPQ skeleton | real SPPQ; eval-mode collapse fix; CPU dispatch optimization; `generate()` context-trim fix (exp-001 finding #7) |
 | L1 | blueprint LoRA recipe, CWS v1.0 (6 personas × 20 states), PERSONALITY_TOKENS | persona-vector extraction pipeline for XorZen; drift telemetry; training-data flagging |
 | L2 | Jima heads (trained, gradient-verified) | halting unit over critique head; budget coupling to router compute_budget |
 | L3 | — (greenfield) | kernel v0: boundary list, ledgers, arithmetic/dates, signing; a *small* deterministic codebase |
@@ -199,7 +202,7 @@ Score 0–5 per doctrine principle (5 = fully satisfies):
 
 Doctrine constraint: consumer/edge CPU-first.
 
-- **Inference core loop:** xorzen.cpp CPU path; target the audited XorZen active-parameter band (~44–54% active); SPPQ (once real) for 8-bit quantization tolerance testing.
+- **Inference core loop:** xorzen.cpp CPU path; active-parameter budget per the doctrine. The vendor-reported band (~44–54% active) is **[VENDOR — not reproduced]**; the one scale point measured so far is `NANO_1M` at ~4.6% active params/token (top-1/2 experts + top-1 pathway; different metric basis) **[EXECUTED, exp-001]**. Treat the band as unverified until exp-002 measures ≥10M. SPPQ (once real) for 8-bit quantization tolerance testing.
 - **Budget knob:** router `compute_budget` (1.0 → 0.25 validated in v0.4) doubles as the hardware throttle — the same axis bounds cost and deliberation depth (Axis B).
 - **KV/state budget:** the SSM pathway's fixed-state design is the long-context workhorse on CPU; attention (local pathway) is budget-limited. Industry reference point: hybrid sparse+linear attention cut KV cache 4.44× at frontier scale (GLM-5.3-Flash) — the same direction XorZen's HASS dispatch already takes.
 - **Symbolic kernel + memory OS:** pure-CPU, dependency-light by design; they must run on the same box as the engine or governance silently moves to whatever machine *can* run them.
@@ -246,8 +249,13 @@ Doctrine constraint: consumer/edge CPU-first.
 - Neuro-symbolic control with LLMs — arXiv:2512.17321; Neuro-symbolic AI — Wikipedia; Kognitos explainer (symbolic = deterministic verifiable execution).
 - GLM-5.3-Flash model card — https://huggingface.co/zai-org/GLM-5.3-Flash (320B/18B active; hybrid sparse+linear attention; 3.01× attention / 4.44× KV reduction; reasoning_effort knob; mHC) — evidence of frontier convergence on conditional compute + budget knobs.
 
-**Internal (audited XorZen v0.4 documentation, `vendor/XorZen/`):**
-- `README.md` (architecture, variants, v0.4 measured impact, known limitations, scaling law, ablations)
+**Internal (XorZen, both the audited vendor copy and the fresh clone):**
+- `README.md` (architecture, variants, v0.4 measured impact, known limitations, scaling law, ablations) — **note:** its variant/param table and test-suite counts are stale against current code (verification log findings #1, #2, #5)
 - `FRAZIYM_PROJECT_SPECS_MASTER.md` (xorvec-data, libcompact, Jima, Greed, Kage specs)
 - `docs/agent/ARCHITECTURE_REFERENCE.md`, `XORZEN_v04_ADVERSARIAL_AUDIT_REPORT.md` (24-claim audit)
 - FU-12/FU-13 worklog entries (canon mapping, CWS v1.0, blueprint = LoRA decision) — `worklog.md`
+
+**Internal (executed by us — this repo):**
+- [`03_verification_log.md`](03_verification_log.md) — 161/161 test suite, V1–V5 conditional-compute checks (2026-11-05), exp-001 zero_1M train+talk (2026-11-06), findings #1–#9
+- [`experiments/001_mini_talk/`](../experiments/001_mini_talk/README.md) — first mini model trained and talking on CPU: metrics.json, verbatim train.log, scripts, vocab, checkpoint
+- `scripts/tess_verify_conditional_compute.py` — independent V1–V5 harness

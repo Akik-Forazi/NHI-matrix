@@ -46,9 +46,12 @@ Script: [`scripts/tess_verify_conditional_compute.py`](../scripts/tess_verify_co
 
 | Claim class | Status |
 |---|---|
-| XorZen 4-axis conditional compute | **RE-EXECUTED today** (V1–V4 PASS) |
-| XorZen test suite passing | **RE-EXECUTED today** (161/161) |
-| XorZen param table / scaling law | **CONTRADICTED today** (finding #2) — treated as stale until re-measured |
+| XorZen 4-axis conditional compute (mechanism) | **RE-EXECUTED 2026-11-05** (V1–V4 PASS) |
+| XorZen test suite passing | **RE-EXECUTED 2026-11-05** (161/161) |
+| XorZen param table / scaling law | **CONTRADICTED 2026-11-05** (finding #2) — treated as stale until re-measured |
+| XorZen zero_1M end-to-end: train + talk on current v1.0.1 (fresh clone `954f3ce`) | **EXECUTED 2026-11-06** (exp-001, §7) |
+| Vendor magnitudes: depth saving 31.8%, v0.4-vs-v0.3 −22.8% FLOPs, active-share 53.5%⇒43.8% | **VENDOR-CITED ONLY** — mechanisms re-executed (V1–V4), magnitudes never reproduced; do not cite as measured |
+| `generate()` API usability | **EXECUTED 2026-11-06** — context-overflow bug found (finding #7) |
 | External results (AlphaGeometry, persona vectors, MemGPT, PonderNet, Hyperon) | **CITED** from opened primary sources — not independently reproduced |
 | Candidate D composite + doctrine scoring | **DESIGN JUDGMENT** — not executable until Phase 2 components exist |
 
@@ -60,3 +63,52 @@ cd vendor/XorZen && pip install -e .
 python3 -m pytest tests/ -q
 python3 scripts/tess_verify_conditional_compute.py
 ```
+
+---
+
+## 7. exp-001 — first mini model trained & talks (executed 2026-11-06)
+
+**Target:** fresh `git clone --depth 1` of `github.com/Akik-Forazi/XorZen` at commit
+`954f3ce` (pyproject version 1.0.1) — i.e. current upstream, not the local vendor copy.
+Full evidence: [`experiments/001_mini_talk/`](../experiments/001_mini_talk/README.md)
+(metrics.json, verbatim train.log, scripts, vocab, checkpoint). Summary:
+
+| Item | Measured |
+|---|---|
+| zero_1M config | hidden=64, layers=3, heads=4, vocab=6765, ctx=128 |
+| zero_1M params | **1,053,711 actual / 1,077,503 claimed** in `variants.py` (−23,792, −2.2%) |
+| Smoke (B4×T128) | loss 8.62→8.51 in 3 steps; 0.11–0.14 s/step; RSS ≤528MB |
+| Train 1500 steps × B8 × T128 (4 Gutenberg books, word-level vocab 6004) | loss 8.61→**5.48**, eval 8.83→**6.19** (ppl ≈ 488); ~5,100 tok/s; RSS ≤720MB; wall 5.5 min; EXIT=0 |
+| Talk | 9 raw generations (3 prompts × 3 temps): function-word texture + prompt continuation correct; unigram-dominated, prompts converge at same temp — no long-range grammar at this budget |
+| Verdict | recorded in exp-001 README "Tess's verdict" — doctrine probe: keep; architectural claims: unproven at this scale |
+
+### Findings #5–#9 (continuing §4 numbering; all executed)
+
+5. **Param drift confirmed on a second variant and a second clone:** zero_1M actual
+   1,053,711 vs 1,077,503 claimed. Also `zero_tiny_23k`'s *name* says 23K while
+   `PARAM_COUNT = 37_824` and its own docstring says "approximately 37 thousand" —
+   the class name itself is stale (ironic, given upstream commit `954f3ce` is titled
+   "added the naming law").
+6. **`train_colab.py`'s default tokenizer does not exist**: `load_pretrained('zero_bpe_10k')`
+   has no matching file in `xorzen/tokenizer/pretrained/` (packaged: only
+   `xorzen_agi_tokenizer_65k`, `xorzen_python_10k`). Deeper packaging issue: **no
+   packaged tokenizer matches the zero models' own vocab (6765)** — every training
+   entrypoint must either fallback or train its own.
+7. **`generate()` context-overflow bug (upstream):** both `_greedy_generate` and
+   `_sample_generate` recompute the full sequence each step but never trim input to
+   `context_length`; prompt(128) + 1 new token → `ValueError: Sequence length 129
+   exceeds maximum 128`. exp-001 worked around it with a custom sampling loop capped
+   at 127. Proposed as exp-002 fix.
+8. **HF `tokenizers` is pathologically slow in this sandbox** (3.6 s for a trivial
+   10k-char / vocab-500 BPE) — full-corpus BPE infeasible; exp-001 used a stdlib
+   word-level tokenizer instead.
+9. **Sandbox operationally reaps user processes at tool-call boundaries** even under
+   `setsid nohup` (two silent mid-run deaths, no traceback). Long runs must be single
+   foreground calls with incremental result dumps.
+
+### Next steps (proposed)
+
+- **exp-002:** `zero_10M` training run + routing-pressure measurements (the scale where
+  depth/width/expert routing starts to matter) + upstream `generate()` context-trim fix.
+- Re-measure the vendor magnitude claims (31.8% depth saving; active-share scaling)
+  at ≥10M before citing them anywhere.
