@@ -203,7 +203,7 @@ Score 0–5 per doctrine principle (5 = fully satisfies):
 Doctrine constraint: consumer/edge CPU-first.
 
 - **Inference core loop:** xorzen.cpp CPU path; active-parameter budget per the doctrine. The vendor-reported band (~44–54% active) is **[VENDOR — not reproduced]**; the one scale point measured so far is `NANO_1M` at ~4.6% active params/token (top-1/2 experts + top-1 pathway; different metric basis) **[EXECUTED, exp-001]**. Treat the band as unverified until exp-002 measures ≥10M. SPPQ (once real) for 8-bit quantization tolerance testing.
-- **Budget knob:** router `compute_budget` (1.0 → 0.25 validated in v0.4) doubles as the hardware throttle — the same axis bounds cost and deliberation depth (Axis B).
+- **Budget knob:** router `compute_budget` [VENDOR — the 1.0 → 0.25 validation is cited from v0.4 docs, not re-executed] doubles as the hardware throttle — the same axis bounds cost and deliberation depth (Axis B).
 - **KV/state budget:** the SSM pathway's fixed-state design is the long-context workhorse on CPU; attention (local pathway) is budget-limited. Industry reference point: hybrid sparse+linear attention cut KV cache 4.44× at frontier scale (GLM-5.3-Flash) — the same direction XorZen's HASS dispatch already takes.
 - **Symbolic kernel + memory OS:** pure-CPU, dependency-light by design; they must run on the same box as the engine or governance silently moves to whatever machine *can* run them.
 - **Training (blueprint adapters only):** single consumer GPU (LoRA-scale), or deferred; the substrate itself is never trained in this project.
